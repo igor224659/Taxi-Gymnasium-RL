@@ -145,7 +145,7 @@ def plot_results(env, agent, rolling_length=500):
 
 ### TESTING THE TRAINED AGENT ###
 
-def test_agent(agent, env, num_episodes=1000):
+def test_agent(agent, env, input, num_episodes=10000):
     # Test agent performance without learning or exploration
     total_rewards = []
 
@@ -172,6 +172,12 @@ def test_agent(agent, env, num_episodes=1000):
     average_reward = np.mean(total_rewards)
     std_reward = np.std(total_rewards)
 
+    if input==True:
+        variant = "Non-deterministic"
+    else:
+        variant = "Deterministic"
+
+    print(f"Variant: {variant}")
     print(f"Test Results over {num_episodes} episodes:")
     print(f"Win Rate: {win_rate:.1%}")
     print(f"Average Reward: {average_reward:.3f} +/- {std_reward:.3f}")
@@ -186,15 +192,28 @@ if __name__ == "__main__":
     # Create the environment.
     # To run the non-deterministic (stochastic) version, uncomment the line below
     # and adjust the hyperparameters accordingly (e.g., more episodes, slower decay).
-    env = gym.make("Taxi-v3")
-    #env = gym.make("Taxi-v3", is_rainy=True, fickle_passenger=True)
+    input_str = str(input("Insert T or F:"))
+    if input_str == 'T':  # Stochastic case
+        input = True
+        # Training hyperparameters
+        learning_rate = 0.005  # Lower learning rate for stability
+        n_episodes = 100000  # Increased episodes for more experience
+        start_epsilon = 1     # Start with 100% random actions
+        epsilon_decay = start_epsilon / (n_episodes * 0.8)   # Reduce more slowly exploration over time
+        final_epsilon = 0.1
+    else:  # Deterministic case
+        input = False
+        # Training hyperparameters
+        learning_rate = 0.01   # Learning speed - higher = faster but less stable 
+        n_episodes = 50000   # Number of episodes to practice 
+        start_epsilon = 1     # Start with 100% random actions
+        epsilon_decay = start_epsilon / (n_episodes /2)  # Reduce exploration over time
+        final_epsilon = 0.1
     
-    # Training hyperparameters
-    learning_rate = 0.01  # Learning speed - higher = faster but less stable
-    n_episodes = 50000  # Number of episodes to practice
-    start_epsilon = 1     # Start with 100% random actions
-    epsilon_decay = start_epsilon / (n_episodes /2)  # Reduce exploration over time
-    final_epsilon = 0.1
+    #print(input)
+
+    #env = gym.make("Taxi-v3")
+    env = gym.make("Taxi-v3", is_rainy=input, fickle_passenger=input)
 
     # Wrap the environment to record stats
     env = gym.wrappers.RecordEpisodeStatistics(env, buffer_length=n_episodes)
@@ -240,6 +259,6 @@ if __name__ == "__main__":
 
     # --- Analysis ---
     plot_results(env, agent)
-    test_agent(agent, env)
+    test_agent(agent, env, input)
 
     env.close()
