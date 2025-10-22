@@ -9,6 +9,7 @@ import torch.nn as nn
 import torch.optim as optim
 from matplotlib import pyplot as plt
 from tqdm import tqdm
+from pathlib import Path # Use pathlib for robust path handling
 
 # Use a GPU if available, otherwise use the CPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -55,8 +56,8 @@ class DQN(nn.Module):
         super(DQN, self).__init__()
         # Changed the hidden layers to 64 and 32 units
         self.layer1 = nn.Linear(n_observations, 64)
-        self.layer2 = nn.Linear(64, 32)
-        self.layer3 = nn.Linear(32, n_actions)
+        self.layer2 = nn.Linear(64, 64)
+        self.layer3 = nn.Linear(64, n_actions)
 
     def forward(self, x):
         """Defines the forward pass of the network."""
@@ -75,9 +76,9 @@ class DQNAgent:
         initial_epsilon: float,
         epsilon_decay: float,
         final_epsilon: float,
-        discount_factor: float = 0.99,
+        discount_factor: float = 0.95,
         replay_buffer_size: int = 10000,
-        batch_size: int = 128,
+        batch_size: int = 64,
     ):
         self.env = env
         self.n_actions = env.action_space.n
@@ -251,7 +252,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--variant", 
         type=str, 
-        default="stochastic", 
+        default="deterministic", 
         choices=["deterministic", "stochastic"],
         help="Choose the environment variant."
     )
@@ -259,10 +260,10 @@ if __name__ == "__main__":
 
     configs = {
         "deterministic": {
-            "n_episodes": 1000,
-            "learning_rate": 1e-4,
+            "n_episodes": 5000,
+            "learning_rate": 0.0005,
             "start_epsilon": 1.0,
-            "final_epsilon": 0.05,
+            "final_epsilon": 0.01,
             "env_kwargs": {"is_rainy": False, "fickle_passenger": False}
         },
         "stochastic": {
@@ -278,18 +279,19 @@ if __name__ == "__main__":
     n_episodes = config["n_episodes"]
     epsilon_decay = config["start_epsilon"] / (n_episodes * 0.8)
 
-    from pathlib import Path
-
     # --- File Setup for Logging ---
-    # Create a dedicated directory for results to ensure the path is valid
-    output_dir = Path.home() / "Documents" / "GitHub" / "Taxi-Gymnasium-RL" / "results"
-    output_dir.mkdir(parents=True, exist_ok=True)
+    # Define the main results directory
+    main_results_dir = Path("results")
 
+    # Create a unique name and subdirectory for this specific run
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    base_filename = f"DQN_{args.variant}_{timestamp}"
-    # Use os.path.join to create paths that work on any operating system
-    plot_path = output_dir / f"{base_filename}.png"
-    results_path = output_dir / f"{base_filename}.txt"
+    run_name = f"DQN_{args.variant}_{timestamp}"
+    run_dir = main_results_dir / run_name
+    run_dir.mkdir(parents=True, exist_ok=True)
+
+    # Define file paths inside the new unique subdirectory
+    plot_filename = run_dir / "plot.png"
+    results_filename = run_dir / "results.txt"
 
     # --- Agent and Environment Setup ---
     env = gym.make("Taxi-v3", **config["env_kwargs"])
@@ -305,7 +307,7 @@ if __name__ == "__main__":
     )
 
     # --- Log Hyperparameters to File ---
-    with open(results_path, 'w') as f:
+    with open(results_filename, 'w') as f:
         f.write(f"--- Hyperparameters for run on {timestamp} ---\n")
         f.write(f"Variant: {args.variant}\n")
         f.write(f"Device: {device}\n")
@@ -321,7 +323,7 @@ if __name__ == "__main__":
 
 
     print(f"--- Running {args.variant.capitalize()} Variant on {device} ---")
-    print(f"Results will be saved to '{base_filename}.*'")
+    print(f"Results will be saved to '{run_dir}'")
     for episode in tqdm(range(n_episodes)):
         state, _ = env.reset()
         done = False
@@ -343,10 +345,8 @@ if __name__ == "__main__":
 
     print("--- Training Finished ---")
 
-    plot_results(env, agent, filename=plot_path)
-    test_agent(agent, env, filename=results_path)
+    plot_results(env, agent, filename=plot_filename)
+    test_agent(agent, env, filename=results_filename)
 
     env.close()
-
-
 
