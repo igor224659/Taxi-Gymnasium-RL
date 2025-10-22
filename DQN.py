@@ -252,7 +252,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--variant", 
         type=str, 
-        default="deterministic", 
+        default="stochastic", 
         choices=["deterministic", "stochastic"],
         help="Choose the environment variant."
     )
@@ -260,17 +260,17 @@ if __name__ == "__main__":
 
     configs = {
         "deterministic": {
-            "n_episodes": 5000,
-            "learning_rate": 0.0005,
+            "n_episodes": 15000,
+            "learning_rate": 0.0001,
             "start_epsilon": 1.0,
             "final_epsilon": 0.01,
             "env_kwargs": {"is_rainy": False, "fickle_passenger": False}
         },
         "stochastic": {
-            "n_episodes": 2500,
-            "learning_rate": 1e-4,
+            "n_episodes": 15000,
+            "learning_rate": 0.0001,
             "start_epsilon": 1.0,
-            "final_epsilon": 0.05,
+            "final_epsilon": 0.01,
             "env_kwargs": {"is_rainy": True, "fickle_passenger": True}
         }
     }

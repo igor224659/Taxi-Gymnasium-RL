@@ -1,0 +1,21 @@
+--- Hyperparameters for run on 20251022_113344 ---
+Variant: deterministic
+Device: cpu
+Episodes: 5000
+Learning Rate: 0.0005
+Start Epsilon: 1.0
+Final Epsilon: 0.01
+Epsilon Decay: 0.00025
+Discount Factor (Gamma): 0.95
+Replay Buffer Size: 0
+Batch Size: 64
+Network Architecture: DQN(
+  (layer1): Linear(in_features=500, out_features=64, bias=True)
+  (layer2): Linear(in_features=64, out_features=64, bias=True)
+  (layer3): Linear(in_features=64, out_features=6, bias=True)
+)
+
+--- Test Results ---
+Tested over 1000 episodes.
+Win Rate: 99.1%
+Average Reward: 6.173 +/- 19.820
