@@ -1,4 +1,6 @@
 from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
 import gymnasium as gym
 import numpy as np
 
@@ -86,7 +88,7 @@ class TaxiAgent:
 
 from matplotlib import pyplot as plt
 
-def plot_results(env, agent, rolling_length=500):
+def plot_results(env, agent, filename: str = None, rolling_length=500):
 
     def get_moving_avgs(arr, window, convolution_mode):
         # Compute moving average to smooth noisy data
@@ -139,19 +141,26 @@ def plot_results(env, agent, rolling_length=500):
     axs[2].set_xlabel("Step")
 
     plt.tight_layout()
+
+    if filename:
+        plt.savefig(filename)
+        print(f"\nPlot saved to {filename}")
+
     plt.show()
+    plt.close(fig) # Close the figure to free memory
 
 
 
 ### TESTING THE TRAINED AGENT ###
 
-def test_agent(agent, env, input, num_episodes=10000):
+def test_agent(agent, env, input, filename: str = None, num_episodes=10000):
     # Test agent performance without learning or exploration
     total_rewards = []
 
     #Temporarily disable exploration for testing
     old_epsilon = agent.epsilon
     agent.epsilon = 0.0  # pure exploitation
+
     for _ in range(num_episodes):
         obs, info = env.reset()
         episode_reward = 0
@@ -182,6 +191,14 @@ def test_agent(agent, env, input, num_episodes=10000):
     print(f"Win Rate: {win_rate:.1%}")
     print(f"Average Reward: {average_reward:.3f} +/- {std_reward:.3f}")
 
+    if filename:
+        with open(filename, 'a') as f:
+            f.write("\n--- Test Results ---\n")
+            f.write(f"Tested over {num_episodes} episodes.\n")
+            f.write(f"Win Rate: {win_rate:.1%}\n")
+            f.write(f"Average Reward: {average_reward:.3f} +/- {std_reward:.3f}\n")
+        print(f"Test results appended to {filename}")
+
 
 
 ### MAIN ###
@@ -195,6 +212,7 @@ if __name__ == "__main__":
     input_str = str(input("Insert T or F:"))
     if input_str == 'T':  # Stochastic case
         input = True
+        variant = "Stochastic"
         # Training hyperparameters
         learning_rate = 0.005  # Lower learning rate for stability
         n_episodes = 100000  # Increased episodes for more experience
@@ -203,14 +221,29 @@ if __name__ == "__main__":
         final_epsilon = 0.1
     else:  # Deterministic case
         input = False
+        variant = "Deterministic"
         # Training hyperparameters
         learning_rate = 0.01   # Learning speed - higher = faster but less stable 
         n_episodes = 50000   # Number of episodes to practice 
         start_epsilon = 1     # Start with 100% random actions
-        epsilon_decay = start_epsilon / (n_episodes /2)  # Reduce exploration over time
+        epsilon_decay = start_epsilon / (n_episodes / 2)  # Reduce exploration over time
         final_epsilon = 0.1
     
     #print(input)
+
+    # --- File Setup for Logging ---
+    # Define the main results directory
+    main_results_dir = Path("Q-results")
+
+    # Create a unique name and subdirectory for this specific run
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_name = f"Q-Learning_{variant}_{timestamp}"
+    run_dir = main_results_dir / run_name
+    run_dir.mkdir(parents=True, exist_ok=True)
+
+    # Define file paths inside the new unique subdirectory
+    plot_filename = run_dir / "plot.png"
+    results_filename = run_dir / "results.txt"
 
     #env = gym.make("Taxi-v3")
     env = gym.make("Taxi-v3", is_rainy=input, fickle_passenger=input)
@@ -226,6 +259,22 @@ if __name__ == "__main__":
         epsilon_decay= epsilon_decay,
         final_epsilon= final_epsilon,
     )
+
+    # --- Log Hyperparameters to File ---
+    with open(results_filename, 'w') as f:
+        f.write(f"--- Hyperparameters for run on {timestamp} ---\n")
+        f.write(f"Variant: {variant}\n")
+        #f.write(f"Device: {device}\n")
+        f.write(f"Episodes: {n_episodes}\n")
+        f.write(f"Learning Rate: {agent.lr}\n")
+        f.write(f"Start Epsilon: {agent.epsilon}\n")
+        f.write(f"Final Epsilon: {agent.final_epsilon}\n")
+        f.write(f"Epsilon Decay: {agent.epsilon_decay}\n")
+        f.write(f"Discount Factor (Gamma): {agent.discount_factor}\n")
+
+
+    print(f"--- Running {variant.capitalize()} Variant ---")
+    print(f"Results will be saved to '{run_dir}'")
 
     # --- Training Loop ---
     print("--- Starting Training ---")
@@ -258,7 +307,7 @@ if __name__ == "__main__":
     print("--- Training Finished ---")
 
     # --- Analysis ---
-    plot_results(env, agent)
-    test_agent(agent, env, input)
+    plot_results(env, agent, filename=plot_filename)
+    test_agent(agent, env, input, filename=results_filename)
 
     env.close()
