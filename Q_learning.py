@@ -218,7 +218,7 @@ if __name__ == "__main__":
         n_episodes = 100000  # Increased episodes for more experience
         start_epsilon = 1     # Start with 100% random actions
         epsilon_decay = start_epsilon / (n_episodes * 0.8)   # Reduce more slowly exploration over time
-        final_epsilon = 0.1
+        final_epsilon = 0.05
     else:  # Deterministic case
         input = False
         variant = "Deterministic"

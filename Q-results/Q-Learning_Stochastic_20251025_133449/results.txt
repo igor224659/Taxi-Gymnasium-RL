@@ -1,0 +1,13 @@
+--- Hyperparameters for run on 20251025_133449 ---
+Variant: Stochastic
+Episodes: 20000
+Learning Rate: 0.005
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 6.25e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 35.4%
+Average Reward: -120.545 +/- 100.771
