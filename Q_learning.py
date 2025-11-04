@@ -20,6 +20,9 @@ class TaxiAgent:
         
         self.env = env
         
+        # We create an entry for each new state automatically, 
+        # initialized to a zero vector of length env.action_space.n (number of actions)
+        # Q-table: Keys = states, Values = arrays of Q-values for each action
         self.q_values = defaultdict(lambda: np.zeros(env.action_space.n))
 
         self.lr = learning_rate
@@ -78,7 +81,7 @@ class TaxiAgent:
 
 
     def decay_epsilon(self):
-        # Reduce exploration rate after each episode
+        # Reduce exploration rate after each episode. It stops decreasing once it reaches final_epsilon
         self.epsilon = max(self.final_epsilon, self.epsilon - self.epsilon_decay)
 
 
@@ -214,11 +217,11 @@ if __name__ == "__main__":
         input = True
         variant = "Stochastic"
         # Training hyperparameters
-        learning_rate = 0.005  # Lower learning rate for stability
+        learning_rate = 0.01  # Lower learning rate for stability
         n_episodes = 100000  # Increased episodes for more experience
         start_epsilon = 1     # Start with 100% random actions
         epsilon_decay = start_epsilon / (n_episodes * 0.8)   # Reduce more slowly exploration over time
-        final_epsilon = 0.05
+        final_epsilon = 0.1
     else:  # Deterministic case
         input = False
         variant = "Deterministic"
@@ -228,8 +231,7 @@ if __name__ == "__main__":
         start_epsilon = 1     # Start with 100% random actions
         epsilon_decay = start_epsilon / (n_episodes / 2)  # Reduce exploration over time
         final_epsilon = 0.1
-    
-    #print(input)
+ 
 
     # --- File Setup for Logging ---
     # Define the main results directory
@@ -282,16 +284,16 @@ if __name__ == "__main__":
 
     for episode in tqdm(range(n_episodes)):
         # Start a new episode
-        obs, info = env.reset()
+        obs, info = env.reset()  # It gets initial state s0
         done = False
 
         # Play one complete episode
         while not done:
             
-            # Agent chooses action
+            # Agent chooses action (e-greedy policy)
             action = agent.get_action(obs)
 
-            # Execute action and observe result
+            # Execute action and receive reward, next_state, and termination info
             next_obs, reward, terminated, truncated, info = env.step(action)
 
             # Learn from this experience

@@ -9,21 +9,23 @@ import torch.nn as nn
 import torch.optim as optim
 from matplotlib import pyplot as plt
 from tqdm import tqdm
-from pathlib import Path # Use pathlib for robust path handling
+from pathlib import Path
 
-# Use a GPU if available, otherwise use the CPU
+# To use GPU if available, otherwise CPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Define the structure for storing experiences
 Transition = namedtuple('Transition', 
                         ('state', 'action', 'next_state', 'reward', 'terminated'))
 
+
+
 class ReplayBuffer:
     """A fixed-size buffer to store experience tuples."""
 
     def __init__(self, capacity):
         """
-        Initialize a ReplayBuffer.
+        Initialize a ReplayBuffer (implemented as a deque).
         
         Args:
             capacity (int): The maximum size of the buffer.
@@ -42,19 +44,20 @@ class ReplayBuffer:
         return len(self.memory)
 
 
+
 class DQN(nn.Module):
     """Deep Q-Network model."""
 
     def __init__(self, n_observations, n_actions):
         """
-        Initialize the neural network.
+        Initialize the fully connected feed-forward neural network.
 
         Args:
             n_observations (int): The size of the state space (500 for Taxi).
             n_actions (int): The number of possible actions (6 for Taxi).
         """
         super(DQN, self).__init__()
-        # Changed the hidden layers to 64 and 32 units
+
         self.layer1 = nn.Linear(n_observations, 64)
         self.layer2 = nn.Linear(64, 64)
         self.layer3 = nn.Linear(64, n_actions)
@@ -64,6 +67,7 @@ class DQN(nn.Module):
         x = torch.relu(self.layer1(x))
         x = torch.relu(self.layer2(x))
         return self.layer3(x)
+
 
 
 class DQNAgent:
@@ -97,18 +101,24 @@ class DQNAgent:
         self.optimizer = optim.AdamW(self.policy_net.parameters(), lr=self.lr, amsgrad=True)
         self.replay_buffer = ReplayBuffer(replay_buffer_size)
         
-        # Define the loss function here (using = for assignment)
+        # Define the loss function here
         self.criterion = nn.SmoothL1Loss() # Huber loss
         
         self.training_steps_done = 0
         self.training_loss = []
 
+
     def get_action(self, state: int) -> int:
         """Choose an action using an epsilon-greedy strategy."""
+        # With probability ε, choose a random action (exploration),
+        # Otherwise, forward-pass the state (one-hot encoded) through the neural network 
+        # to get Q(s, a) for all actions and choose argmax_a Q(s,a).
+
         if random.random() < self.epsilon:
             return self.env.action_space.sample()
+        
         else:
-            with torch.no_grad():
+            with torch.no_grad():  # temporarily disables gradient tracking
                 # One-hot encode the state
                 state_tensor = torch.zeros(self.n_observations, device=device)
                 state_tensor[state] = 1.0
@@ -116,65 +126,87 @@ class DQNAgent:
                 q_values = self.policy_net(state_tensor.unsqueeze(0))
                 # Choose the action with the highest Q-value
                 return q_values.max(1)[1].item()
+            
 
     def decay_epsilon(self):
         """Decay the exploration rate."""
         self.epsilon = max(self.final_epsilon, self.epsilon - self.epsilon_decay)
 
+
     def learn(self):
         """Update the policy network using a batch from the replay buffer."""
         if len(self.replay_buffer) < self.batch_size:
-            return
+            return  # Only start training once there are enough experiences to form a batch
 
+        # Creation of the batch
         transitions = self.replay_buffer.sample(self.batch_size)
-        batch = Transition(*zip(*transitions))
+        batch = Transition(*zip(*transitions))  # convert the list of transitions into 5 tuples (batch. state, .action ...)
+
 
         # --- Prepare the batch for the network ---
         
-        # One-hot encode states and next_states
-        state_batch = torch.zeros(self.batch_size, self.n_observations, device=device)
-        next_state_batch = torch.zeros(self.batch_size, self.n_observations, device=device)
+        # Prepare state tensors for neural network input (matrices filled with 0s, of shape = [batch_size, n_observations])
+        # Each row will become a one-hot encoded vector representing a discrete state
+        state_batch = torch.zeros(self.batch_size, self.n_observations, device=device) 
+        next_state_batch = torch.zeros(self.batch_size, self.n_observations, device=device)  
         
+        # Identify which transitions are not terminal, because terminal states don’t have future rewards.
+        # It's a boolean tensor
         non_final_mask = torch.tensor(tuple(map(lambda s: s is not None, batch.next_state)), device=device, dtype=torch.bool)
         
+        # One-hot encode all current states (converts each discrete integer state (0–499) into a 500-dimensional one-hot vector)
         for i, s in enumerate(batch.state):
             state_batch[i, s] = 1.0
         
-        next_state_indices = [s for s in batch.next_state if s is not None]
+        # One-hot encode next_states: Create an identity matrix (size 500×500) where each row is a one-hot vector,
+        # Selects the rows corresponding to the valid next states, and assigns these one-hot encoded next states 
+        # only to rows marked True in the mask.
+        next_state_indices = [s for s in batch.next_state if s is not None]  # list of the only valid next states
         if len(next_state_indices) > 0:
             next_state_batch[non_final_mask] = torch.eye(self.n_observations, device=device)[next_state_indices]
 
+        # As a result, each valid row in next_state_batch is the one-hot of the next state, and Terminal rows remain all zeros.
+
+        # Convert actions and rewards to tensors
         action_batch = torch.tensor(batch.action, device=device).unsqueeze(1)
         reward_batch = torch.tensor(batch.reward, device=device)
         
+
         # --- Compute Q-values ---
 
-        # Q(s_t, a) - The Q-values for the actions that were actually taken
+        # Computing Q-values for the actions that were actually taken
+        # Runs the forward pass through the neural network and uses .gather(1, action_batch) to pick only the Q-value of the action that was actually taken in each sample.
         state_action_values = self.policy_net(state_batch).gather(1, action_batch)
 
-        # V(s_{t+1}) - The maximum Q-value for the next state, calculated by the SAME policy network
-        next_state_values = torch.zeros(self.batch_size, device=device)
-        with torch.no_grad():
+        # Computing target Q-values - the maximum Q-value for the next state, calculated by the SAME policy network
+        next_state_values = torch.zeros(self.batch_size, device=device)  # Initialize all future Q-value as 0
+        with torch.no_grad():  # it ensures these targets are detached from the computation graph (this avoids gradient backpropagation through the target computation.)
+            # forward pass to get predicted Q-values for all actions in those next states, and to keep only the entries in the batch with valid next Q-values.
             next_state_values[non_final_mask] = self.policy_net(next_state_batch[non_final_mask]).max(1)[0]
         
-        # Expected Q-values
+        # Compute the Bellman Target
         expected_state_action_values = (next_state_values * self.gamma) + reward_batch
 
+
         # --- Compute Loss and update the policy network ---
+
+        # SmoothL1 Loss - quadratic for small errors and linear for large ones (less sensitive to outliers)
+        loss = self.criterion(state_action_values, expected_state_action_values.unsqueeze(1)) # loss is a scalar tensor, representing the average loss over the batch.
         
-        loss = self.criterion(state_action_values, expected_state_action_values.unsqueeze(1))
         self.training_loss.append(loss.item())
 
-        self.optimizer.zero_grad()
-        loss.backward()
-        torch.nn.utils.clip_grad_value_(self.policy_net.parameters(), 100)
-        self.optimizer.step()
+        self.optimizer.zero_grad()  # Reset gradients from previous steps
+        loss.backward()  # Backpropagate the loss to compute gradients (∇θ​L) for all parameters in the policy network
+        torch.nn.utils.clip_grad_value_(self.policy_net.parameters(), 100)  # Clip gradient values to ±100 to avoid explosion
+        self.optimizer.step()  # Update network weights using AdamW optimizer (θ ← θ−η∇θ​L)
 
         self.training_steps_done += 1
 
+
+
 def plot_results(env: gym.Env, agent: DQNAgent, rolling_length: int = 100, filename: str = None):
     """Plot training results and optionally save to a file."""
-    # Changed to 3 subplots and adjusted figure size
+    
     fig, axs = plt.subplots(ncols=3, figsize=(18, 5))
     
     def get_moving_avgs(arr, window):
@@ -187,16 +219,16 @@ def plot_results(env: gym.Env, agent: DQNAgent, rolling_length: int = 100, filen
     axs[0].set_xlabel("Episode")
     axs[0].set_ylabel(f"Average Reward (over {rolling_length} episodes)")
 
-    # Plot 2: Episode Lengths (NEW PLOT)
+    # Plot 2: Episode Lengths
     axs[1].set_title("Episode Lengths")
     length_moving_average = get_moving_avgs(env.length_queue, rolling_length)
     axs[1].plot(range(len(length_moving_average)), length_moving_average)
     axs[1].set_xlabel("Episode")
     axs[1].set_ylabel(f"Average Length (over {rolling_length} episodes)")
 
-    # Plot 3: Training Loss (moved to the third position)
+    # Plot 3: Training Loss
     axs[2].set_title("Training Loss")
-    loss_moving_average = get_moving_avgs(agent.training_loss, rolling_length * 10) # Smoother loss
+    loss_moving_average = get_moving_avgs(agent.training_loss, rolling_length * 10)
     axs[2].plot(range(len(loss_moving_average)), loss_moving_average)
     axs[2].set_xlabel("Training Step")
     axs[2].set_ylabel(f"Average Loss (over {rolling_length*10} steps)")
@@ -209,6 +241,8 @@ def plot_results(env: gym.Env, agent: DQNAgent, rolling_length: int = 100, filen
     
     plt.show()
     plt.close(fig) # Close the figure to free memory
+
+
 
 def test_agent(agent: DQNAgent, env: gym.Env, num_episodes: int = 1000, filename: str = None):
     """Test the agent's performance and optionally save results to a file."""
@@ -247,6 +281,7 @@ def test_agent(agent: DQNAgent, env: gym.Env, num_episodes: int = 1000, filename
         print(f"Test results appended to {filename}")
 
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train a DQN agent for Taxi-v3.")
     parser.add_argument(
@@ -264,6 +299,7 @@ if __name__ == "__main__":
             "learning_rate": 0.0001,
             "start_epsilon": 1.0,
             "final_epsilon": 0.01,
+            "epsilon_decay_factor": 0.5,
             "env_kwargs": {"is_rainy": False, "fickle_passenger": False}
         },
         "stochastic": {
@@ -271,13 +307,14 @@ if __name__ == "__main__":
             "learning_rate": 0.0001,
             "start_epsilon": 1.0,
             "final_epsilon": 0.01,
+            "epsilon_decay_factor": 0.8, 
             "env_kwargs": {"is_rainy": True, "fickle_passenger": True}
         }
     }
     
     config = configs[args.variant]
     n_episodes = config["n_episodes"]
-    epsilon_decay = config["start_epsilon"] / (n_episodes * 0.8)
+    epsilon_decay = config["start_epsilon"] / (n_episodes * config["epsilon_decay_factor"])
 
     # --- File Setup for Logging ---
     # Define the main results directory
@@ -295,7 +332,7 @@ if __name__ == "__main__":
 
     # --- Agent and Environment Setup ---
     env = gym.make("Taxi-v3", **config["env_kwargs"])
-    # Use the older 'buffer_length' argument for compatibility
+    
     env = gym.wrappers.RecordEpisodeStatistics(env, buffer_length=n_episodes)
     
     agent = DQNAgent(
@@ -324,6 +361,7 @@ if __name__ == "__main__":
 
     print(f"--- Running {args.variant.capitalize()} Variant on {device} ---")
     print(f"Results will be saved to '{run_dir}'")
+
     for episode in tqdm(range(n_episodes)):
         state, _ = env.reset()
         done = False
@@ -332,7 +370,7 @@ if __name__ == "__main__":
             next_state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
             
-            # If terminated, next_state is None for our buffer logic
+            # If terminated, next_state is None for the buffer logic
             real_next_state = next_state if not terminated else None
             
             agent.replay_buffer.push(state, action, real_next_state, reward, terminated)

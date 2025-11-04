@@ -1,0 +1,493 @@
+
+
+--- Content from: Q-Learning_Deterministic_20251024_131942\results.txt ---
+
+--- Hyperparameters for run on 20251024_131942 ---
+Variant: Deterministic
+Episodes: 10000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 0.0002
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 45.1%
+Average Reward: -105.376 +/- 104.410
+
+
+--- Content from: Q-Learning_Deterministic_20251024_132435\results.txt ---
+
+--- Hyperparameters for run on 20251024_132435 ---
+Variant: Deterministic
+Episodes: 10000
+Learning Rate: 0.005
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 0.0002
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 9.7%
+Average Reward: -179.436 +/- 62.817
+
+
+--- Content from: Q-Learning_Deterministic_20251024_132601\results.txt ---
+
+--- Hyperparameters for run on 20251024_132601 ---
+Variant: Deterministic
+Episodes: 20000
+Learning Rate: 0.005
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 0.0001
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 40.9%
+Average Reward: -114.047 +/- 103.287
+
+
+--- Content from: Q-Learning_Deterministic_20251024_132721\results.txt ---
+
+--- Hyperparameters for run on 20251024_132721 ---
+Variant: Deterministic
+Episodes: 20000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 0.0001
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 92.5%
+Average Reward: -7.476 +/- 55.030
+
+
+--- Content from: Q-Learning_Deterministic_20251024_132829\results.txt ---
+
+--- Hyperparameters for run on 20251024_132829 ---
+Variant: Deterministic
+Episodes: 50000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 4e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 100.0%
+Average Reward: 7.881 +/- 2.574
+
+
+--- Content from: Q-Learning_Deterministic_20251024_132958\results.txt ---
+
+--- Hyperparameters for run on 20251024_132958 ---
+Variant: Deterministic
+Episodes: 50000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 2.5e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 100.0%
+Average Reward: 7.901 +/- 2.602
+
+
+--- Content from: Q-Learning_Deterministic_20251024_133123\results.txt ---
+
+--- Hyperparameters for run on 20251024_133123 ---
+Variant: Deterministic
+Episodes: 20000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 6.25e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 91.3%
+Average Reward: -9.926 +/- 58.868
+
+
+--- Content from: Q-Learning_Deterministic_20251024_133227\results.txt ---
+
+--- Hyperparameters for run on 20251024_133227 ---
+Variant: Deterministic
+Episodes: 20000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.05
+Epsilon Decay: 6.25e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 89.2%
+Average Reward: -14.079 +/- 64.599
+
+
+--- Content from: Q-Learning_Deterministic_20251024_133316\results.txt ---
+
+--- Hyperparameters for run on 20251024_133316 ---
+Variant: Deterministic
+Episodes: 50000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.05
+Epsilon Decay: 2.5e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 100.0%
+Average Reward: 7.928 +/- 2.591
+
+
+--- Content from: Q-Learning_Deterministic_20251024_133441\results.txt ---
+
+--- Hyperparameters for run on 20251024_133441 ---
+Variant: Deterministic
+Episodes: 50000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.05
+Epsilon Decay: 4e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 100.0%
+Average Reward: 7.944 +/- 2.591
+
+
+--- Content from: Q-Learning_Deterministic_20251024_133617\results.txt ---
+
+--- Hyperparameters for run on 20251024_133617 ---
+Variant: Deterministic
+Episodes: 50000
+Learning Rate: 0.005
+Start Epsilon: 1
+Final Epsilon: 0.05
+Epsilon Decay: 4e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 97.8%
+Average Reward: 3.354 +/- 30.952
+
+
+--- Content from: Q-Learning_Deterministic_20251024_133745\results.txt ---
+
+--- Hyperparameters for run on 20251024_133745 ---
+Variant: Deterministic
+Episodes: 100000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.05
+Epsilon Decay: 2e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 100.0%
+Average Reward: 7.907 +/- 2.583
+
+
+--- Content from: Q-Learning_Deterministic_20251024_133948\results.txt ---
+
+--- Hyperparameters for run on 20251024_133948 ---
+Variant: Deterministic
+Episodes: 100000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.05
+Epsilon Decay: 1.25e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 100.0%
+Average Reward: 7.890 +/- 2.602
+
+
+--- Content from: Q-Learning_Deterministic_20251024_134200\results.txt ---
+
+--- Hyperparameters for run on 20251024_134200 ---
+Variant: Deterministic
+Episodes: 100000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 1.25e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 100.0%
+Average Reward: 7.905 +/- 2.572
+
+
+--- Content from: Q-Learning_Deterministic_20251024_134410\results.txt ---
+
+--- Hyperparameters for run on 20251024_134410 ---
+Variant: Deterministic
+Episodes: 100000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 2e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 100.0%
+Average Reward: 7.930 +/- 2.596
+
+
+--- Content from: Q-Learning_Deterministic_20251025_132651\results.txt ---
+
+--- Hyperparameters for run on 20251025_132651 ---
+Variant: Deterministic
+Episodes: 10000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 0.0002
+Discount Factor (Gamma): 0.9
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 40.8%
+Average Reward: -114.277 +/- 103.267
+
+
+--- Content from: Q-Learning_Deterministic_20251025_132743\results.txt ---
+
+--- Hyperparameters for run on 20251025_132743 ---
+Variant: Deterministic
+Episodes: 20000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 0.0001
+Discount Factor (Gamma): 0.9
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 86.2%
+Average Reward: -20.373 +/- 71.906
+
+
+--- Content from: Q-Learning_Deterministic_20251025_132835\results.txt ---
+
+--- Hyperparameters for run on 20251025_132835 ---
+Variant: Deterministic
+Episodes: 50000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 4e-05
+Discount Factor (Gamma): 0.9
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 100.0%
+Average Reward: 7.928 +/- 2.600
+
+
+--- Content from: Q-Learning_Stochastic_20251025_133255\results.txt ---
+
+--- Hyperparameters for run on 20251025_133255 ---
+Variant: Stochastic
+Episodes: 10000
+Learning Rate: 0.005
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 0.000125
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 9.1%
+Average Reward: -178.869 +/- 62.698
+
+
+--- Content from: Q-Learning_Stochastic_20251025_133449\results.txt ---
+
+--- Hyperparameters for run on 20251025_133449 ---
+Variant: Stochastic
+Episodes: 20000
+Learning Rate: 0.005
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 6.25e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 35.4%
+Average Reward: -120.545 +/- 100.771
+
+
+--- Content from: Q-Learning_Stochastic_20251025_142914\results.txt ---
+
+--- Hyperparameters for run on 20251025_142914 ---
+Variant: Stochastic
+Episodes: 20000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 6.25e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 69.8%
+Average Reward: -28.725 +/- 75.818
+
+
+--- Content from: Q-Learning_Stochastic_20251025_143022\results.txt ---
+
+--- Hyperparameters for run on 20251025_143022 ---
+Variant: Stochastic
+Episodes: 20000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.05
+Epsilon Decay: 6.25e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 69.9%
+Average Reward: -30.524 +/- 77.532
+
+
+--- Content from: Q-Learning_Stochastic_20251025_143127\results.txt ---
+
+--- Hyperparameters for run on 20251025_143127 ---
+Variant: Stochastic
+Episodes: 50000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.05
+Epsilon Decay: 2.5e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 83.5%
+Average Reward: 5.011 +/- 4.765
+
+
+--- Content from: Q-Learning_Stochastic_20251025_143315\results.txt ---
+
+--- Hyperparameters for run on 20251025_143315 ---
+Variant: Stochastic
+Episodes: 50000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 2.5e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 83.0%
+Average Reward: 5.007 +/- 4.765
+
+
+--- Content from: Q-Learning_Stochastic_20251025_143445\results.txt ---
+
+--- Hyperparameters for run on 20251025_143445 ---
+Variant: Stochastic
+Episodes: 50000
+Learning Rate: 0.005
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 2.5e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 80.6%
+Average Reward: -0.803 +/- 34.064
+
+
+--- Content from: Q-Learning_Stochastic_20251025_143631\results.txt ---
+
+--- Hyperparameters for run on 20251025_143631 ---
+Variant: Stochastic
+Episodes: 50000
+Learning Rate: 0.05
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 2.5e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 83.0%
+Average Reward: 4.992 +/- 4.757
+
+
+--- Content from: Q-Learning_Stochastic_20251025_143805\results.txt ---
+
+--- Hyperparameters for run on 20251025_143805 ---
+Variant: Stochastic
+Episodes: 50000
+Learning Rate: 0.05
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 4e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 83.6%
+Average Reward: 4.994 +/- 4.755
+
+
+--- Content from: Q-Learning_Stochastic_20251025_143928\results.txt ---
+
+--- Hyperparameters for run on 20251025_143928 ---
+Variant: Stochastic
+Episodes: 100000
+Learning Rate: 0.01
+Start Epsilon: 1
+Final Epsilon: 0.1
+Epsilon Decay: 1.25e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 83.4%
+Average Reward: 5.027 +/- 4.706
+
+
+--- Content from: Q-Learning_Stochastic_20251025_144924\results.txt ---
+
+--- Hyperparameters for run on 20251025_144924 ---
+Variant: Stochastic
+Episodes: 100000
+Learning Rate: 0.005
+Start Epsilon: 1
+Final Epsilon: 0.05
+Epsilon Decay: 1.25e-05
+Discount Factor (Gamma): 0.95
+
+--- Test Results ---
+Tested over 10000 episodes.
+Win Rate: 82.5%
+Average Reward: 4.900 +/- 4.795
