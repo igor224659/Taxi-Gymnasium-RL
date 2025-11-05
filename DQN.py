@@ -146,12 +146,10 @@ class DQNAgent:
         # --- Prepare the batch for the network ---
         
         # Prepare state tensors for neural network input (matrices filled with 0s, of shape = [batch_size, n_observations])
-        # Each row will become a one-hot encoded vector representing a discrete state
         state_batch = torch.zeros(self.batch_size, self.n_observations, device=device) 
         next_state_batch = torch.zeros(self.batch_size, self.n_observations, device=device)  
         
         # Identify which transitions are not terminal, because terminal states don’t have future rewards.
-        # It's a boolean tensor
         non_final_mask = torch.tensor(tuple(map(lambda s: s is not None, batch.next_state)), device=device, dtype=torch.bool)
         
         # One-hot encode all current states (converts each discrete integer state (0–499) into a 500-dimensional one-hot vector)
@@ -159,8 +157,7 @@ class DQNAgent:
             state_batch[i, s] = 1.0
         
         # One-hot encode next_states: Create an identity matrix (size 500×500) where each row is a one-hot vector,
-        # Selects the rows corresponding to the valid next states, and assigns these one-hot encoded next states 
-        # only to rows marked True in the mask.
+        # Selects the rows corresponding to the valid next states, and assigns these one-hot encoded next states only to rows marked True in the mask.
         next_state_indices = [s for s in batch.next_state if s is not None]  # list of the only valid next states
         if len(next_state_indices) > 0:
             next_state_batch[non_final_mask] = torch.eye(self.n_observations, device=device)[next_state_indices]
@@ -178,9 +175,9 @@ class DQNAgent:
         # Runs the forward pass through the neural network and uses .gather(1, action_batch) to pick only the Q-value of the action that was actually taken in each sample.
         current_q_values = self.policy_net(state_batch).gather(1, action_batch)
 
-        # Computing target Q-values - the maximum Q-value for the next state, calculated by the SAME policy network
+        # Computing target Q-values - the maximum Q-value for the next state, calculated by the same policy network
         next_q_values = torch.zeros(self.batch_size, device=device)  # Initialize all future Q-value as 0
-        with torch.no_grad():  # it ensures these targets are detached from the computation graph (this avoids gradient backpropagation through the target computation.)
+        with torch.no_grad(): 
             # forward pass to get predicted Q-values for all actions in those next states, and to keep only the entries in the batch with valid next Q-values.
             next_q_values[non_final_mask] = self.policy_net(next_state_batch[non_final_mask]).max(1)[0]
         
@@ -196,7 +193,7 @@ class DQNAgent:
         self.training_loss.append(loss.item())
 
         self.optimizer.zero_grad()  # Reset gradients from previous steps
-        loss.backward()  # Backpropagate the loss to compute gradients (∇θ​L) for all parameters in the policy network
+        loss.backward()  # Compute the gradients of the loss with respect to parameters in the policy network
         torch.nn.utils.clip_grad_value_(self.policy_net.parameters(), 100)  # Clip gradient values to ±100 to avoid explosion
         self.optimizer.step()  # Update network weights using AdamW optimizer (θ ← θ−η∇θ​L)
 
