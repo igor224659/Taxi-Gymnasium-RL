@@ -176,22 +176,22 @@ class DQNAgent:
 
         # Computing Q-values for the actions that were actually taken
         # Runs the forward pass through the neural network and uses .gather(1, action_batch) to pick only the Q-value of the action that was actually taken in each sample.
-        state_action_values = self.policy_net(state_batch).gather(1, action_batch)
+        current_q_values = self.policy_net(state_batch).gather(1, action_batch)
 
         # Computing target Q-values - the maximum Q-value for the next state, calculated by the SAME policy network
-        next_state_values = torch.zeros(self.batch_size, device=device)  # Initialize all future Q-value as 0
+        next_q_values = torch.zeros(self.batch_size, device=device)  # Initialize all future Q-value as 0
         with torch.no_grad():  # it ensures these targets are detached from the computation graph (this avoids gradient backpropagation through the target computation.)
             # forward pass to get predicted Q-values for all actions in those next states, and to keep only the entries in the batch with valid next Q-values.
-            next_state_values[non_final_mask] = self.policy_net(next_state_batch[non_final_mask]).max(1)[0]
+            next_q_values[non_final_mask] = self.policy_net(next_state_batch[non_final_mask]).max(1)[0]
         
         # Compute the Bellman Target
-        expected_state_action_values = (next_state_values * self.gamma) + reward_batch
+        targets = (next_q_values * self.gamma) + reward_batch
 
 
         # --- Compute Loss and update the policy network ---
 
         # SmoothL1 Loss - quadratic for small errors and linear for large ones (less sensitive to outliers)
-        loss = self.criterion(state_action_values, expected_state_action_values.unsqueeze(1)) # loss is a scalar tensor, representing the average loss over the batch.
+        loss = self.criterion(current_q_values, targets.unsqueeze(1)) # loss is a scalar tensor, representing the average loss over the batch.
         
         self.training_loss.append(loss.item())
 

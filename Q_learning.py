@@ -209,9 +209,6 @@ def test_agent(agent, env, input, filename: str = None, num_episodes=10000):
 if __name__ == "__main__":
     # --- Environment and Hyperparameters ---
     
-    # Create the environment.
-    # To run the non-deterministic (stochastic) version, uncomment the line below
-    # and adjust the hyperparameters accordingly (e.g., more episodes, slower decay).
     input_str = str(input("Insert T or F:"))
     if input_str == 'T':  # Stochastic case
         input = True
@@ -247,7 +244,7 @@ if __name__ == "__main__":
     plot_filename = run_dir / "plot.png"
     results_filename = run_dir / "results.txt"
 
-    #env = gym.make("Taxi-v3")
+    # Create the environment.
     env = gym.make("Taxi-v3", is_rainy=input, fickle_passenger=input)
 
     # Wrap the environment to record stats
