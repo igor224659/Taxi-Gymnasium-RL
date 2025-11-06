@@ -102,7 +102,7 @@ class DQNAgent:
         self.replay_buffer = ReplayBuffer(replay_buffer_size)
         
         # Define the loss function here
-        self.criterion = nn.SmoothL1Loss() # Huber loss
+        self.criterion = nn.SmoothL1Loss()
         
         self.training_steps_done = 0
         self.training_loss = []
